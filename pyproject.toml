@@ -7,8 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.115.0"
-fastapi-sqlalchemy = "^0.2.1"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
+sqlalchemy = "^2.0.35"
+python-multipart = "^0.0.9"
 
 
 [build-system]
