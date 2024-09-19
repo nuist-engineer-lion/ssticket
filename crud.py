@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from . import modules, schemas
@@ -28,3 +29,7 @@ def create_ticket(db: Session, ticket: schemas.TicketCreate):
     db.commit()
     db.refresh(db_ticket)
     return db_ticket
+
+def create_file(db: Session, file: UploadFile, ticket_id:int):
+    # TODO file upload and get uri
+    ...

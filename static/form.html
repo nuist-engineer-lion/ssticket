@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+    <form action="/ticket" enctype="multipart/form-data" method="post" id="ticket_form">
+        <input name="name" type="text">
+        <input name="qq" type="text" required>
+        <textarea name="discription" form="ticket_form">
+        </textarea> 
+        <select name="problem_type" form="ticket_form">
+            <option value="0">question</option>
+            <option value="1">error</option>
+            <option value="2">clean</option>
+        </select>
+        <select name="help_type" form="ticket_form">
+            <option value="0">software</option>
+            <option value="1">hardware</option>
+            <option value="2">both</option>
+            <option value="3">other</option>
+        </select>
+        <input name="hope_time" type="datetime-local">
+        <input name="files" type="file" multiple>
+        <input type="submit">    
+    </form>
+</body>
+</html>

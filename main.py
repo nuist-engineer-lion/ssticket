@@ -1,14 +1,18 @@
-from fastapi import FastAPI,Depends,File,UploadFile
+from fastapi import FastAPI,Depends,File,UploadFile,Form
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from . import modules, schemas, crud
 from .database import SessionLocal, engine
 
+from typing import Annotated
 import os
 
-models.Base.metadata.create_all(bind=engine)
+modules.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/static/", StaticFiles(directory="static"), name="static")
 
 def get_db():
     db = SessionLocal()
@@ -17,7 +21,11 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/ticket")
-async def upload(ticket:schemas.TicketCreate,db:Session = Depends(get_db)):
+@app.post("/ticket",status_code=201)
+async def upload_ticket_form(
+    ticket:Annotated[schemas.TicketCreate,File()],
+    db:Session = Depends(get_db),
+    ):
     
-    return 200
+    db_ticket = crud.create_ticket(db,ticket)
+    return db_ticket
