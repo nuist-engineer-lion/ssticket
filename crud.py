@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from . import modules, schemas
 
 def create_ticket(db: Session, ticket: schemas.TicketCreate):
+    # TODO 数据校验
     db_ticket = modules.Ticket(
         qq = ticket.qq
     )
@@ -23,8 +24,6 @@ def create_ticket(db: Session, ticket: schemas.TicketCreate):
     if ticket.hope_time:
         db_ticket.hope_date=ticket.hope_time
 
-    # TODO file
-
     db.add(db_ticket)
     db.commit()
     db.refresh(db_ticket)
@@ -32,4 +31,5 @@ def create_ticket(db: Session, ticket: schemas.TicketCreate):
 
 def create_file(db: Session, file: UploadFile, ticket_id:int):
     # TODO file upload and get uri
+    # TODO 文件格式校验
     ...
