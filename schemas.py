@@ -16,3 +16,7 @@ class TicketCreate(BaseModel):
     hope_time: datetime.datetime | None = None
 
     files: List[UploadFile] | None = None
+
+class WorkerCreate(BaseModel):
+    name:str
+    contact:str

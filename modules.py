@@ -8,8 +8,8 @@ from .database import Base
 class Worker(Base):
     __tablename__ = 'workers'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    qq = Column(String)
+    name = Column(String,unique=True)
+    contact = Column(String)
     available = Column(Boolean,default=False)
 
 class Ticket(Base):
