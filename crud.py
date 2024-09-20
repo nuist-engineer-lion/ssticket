@@ -1,11 +1,14 @@
 from datetime import datetime
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 import shutil
 import hashlib
 
 from . import modules, schemas
+
+import os
 
 def create_ticket(ticket: schemas.TicketCreate,db: Session):
     
@@ -69,26 +72,60 @@ def create_worker(worker: schemas.WorkerCreate,db: Session):
     db.refresh(db_worker)
     return db_worker
 
-def research_ticket_by_time(before:datetime,handled:int|None,db: Session):
-    ...
+def research_ticket_by_time(time:datetime,handled:int|None,db: Session):
+    if handled:
+        tickets = db.execute(select(modules.Ticket).where(modules.Ticket.create_time >= time).where(modules.Ticket.handled==handled)).scalars()
+    else:
+        tickets = db.execute(select(modules.Ticket).where(modules.Ticket.create_time >= time)).scalars()
+    return tickets
 
-def research_worker(avaliable:int|None,name:str|None,db: Session):
-    ...
+
+def research_workers(avaliable:int|None,db: Session):
+    if avaliable:
+        workers = db.execute(select(modules.Worker).where(modules.Worker.available==avaliable)).scalars()
+    else:
+        workers = db.execute(select(modules.Worker)).scalars()
+    return workers
+
+def research_worker(name:str,db:Session):
+    worker = db.execute(select(modules.Worker).where(modules.Worker.name==name)).scalar()
+    return worker
 
 def research_file(ticket_id:int,db:Session):
-    ...
+    files = db.execute(select(modules.Image).where(modules.Image.ticket_id==ticket_id)).scalars()
+    return files
 
-def update_ticket(db_ticket:modules.Ticket,description:str|None,worker_id:int|None,handled:int|None,db:Session):
-    ...
+def update_ticket(db_ticket:modules.Ticket,discription:str|None,worker_id:int|None,handled:int|None,db:Session):
+    if discription:
+        db_ticket.discription = db_ticket.discription + '\n' +discription
+    if worker_id:
+        db_ticket.worker_id = worker_id
+    if handled:
+        db_ticket.handled = handled
+    db.commit()
+    db.refresh(db_ticket)
+    return db_ticket
 
 def update_worker(db_worker:modules.Worker,available:bool|None,contact:str|None,db:Session):
-    ...
+    if available:
+        db_worker.available = available
+    if contact:
+        db_worker.contact = contact
+    db.commit()
+    db.refresh(db_worker)
+    return db_worker
 
 def delete_ticket(db_ticket:modules.Ticket,db:Session):
-    ...
+    files = research_file(ticket_id=db_ticket.id,db=db)
+    for file in files:
+        delete_file(file,db)
+    db.delete(db_ticket)
+    db.commit()
+    
 
 def delete_worker(db_worker:modules.Worker,db:Session):
-    ...
+    db.delete(db_worker)
 
 def delete_file(db_file:modules.Image,db:Session):
-    ...
+    os.remove(db_file.uri)
+    db.delete(db_file)
