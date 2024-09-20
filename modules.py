@@ -15,7 +15,7 @@ class Worker(Base):
 class Ticket(Base):
     __tablename__ = 'tickets'
     id = Column(Integer, primary_key=True)
-    qq = Column(String)
+    contact = Column(String)
     name = Column(String, nullable=True)
 
     discription = Column(Text,nullable=True)
@@ -37,5 +37,5 @@ class Image(Base):
     __tablename__ = 'images'
     id = Column(Integer,primary_key=True)
     uri = Column(String)
-
+    size = Column(Integer)
     ticket_id = Column(Integer,ForeignKey('tickets.id'))

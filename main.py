@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends,File,UploadFile,Form
+from fastapi import FastAPI,Depends,File, HTTPException,UploadFile,Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
@@ -27,11 +27,25 @@ async def upload_ticket_form(
     db:Session = Depends(get_db),
     ):
     
-    db_ticket = crud.create_ticket(db,ticket)
-    
-    # TODO 添加文件处理
+    db_ticket = crud.create_ticket(ticket,db)
 
+    # file handler
+    for file in ticket.files:
+        try:
+            # check
+            if file.size == 0:
+                break
+            if file.content_type.split('/')[0] != "image":
+                raise HTTPException(status_code=400,detail=file.content_type)
+            # create
+            crud.create_file(file,db_ticket.id,db)
+        finally:
+            file.file.close()
+    
     # TODO 重定向到成员页
     return db_ticket
 
 # TODO 空闲成员推荐
+@app.get('/workers',status_code=200)
+async def get_workers(db:Session=Depends(get_db)):
+    return

@@ -1,10 +1,11 @@
 import datetime
+from typing import List
 from fastapi import UploadFile
 from pydantic import BaseModel
 
 class TicketCreate(BaseModel):
     name: str | None = None
-    qq: str
+    contact: str
 
     discription:str | None = None
     # 0:question 1:error 2:clean
@@ -14,3 +15,4 @@ class TicketCreate(BaseModel):
 
     hope_time: datetime.datetime | None = None
 
+    files: List[UploadFile] | None = None

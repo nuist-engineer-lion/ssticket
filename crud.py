@@ -1,12 +1,15 @@
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+import shutil
+import hashlib
+
 from . import modules, schemas
 
-def create_ticket(db: Session, ticket: schemas.TicketCreate):
-    # TODO 数据校验
+def create_ticket(ticket: schemas.TicketCreate,db: Session):
+    
     db_ticket = modules.Ticket(
-        qq = ticket.qq
+        contact = ticket.contact
     )
 
     if ticket.name:
@@ -29,7 +32,28 @@ def create_ticket(db: Session, ticket: schemas.TicketCreate):
     db.refresh(db_ticket)
     return db_ticket
 
-def create_file(db: Session, file: UploadFile, ticket_id:int):
-    # TODO file upload and get uri
-    # TODO 文件格式校验
-    ...
+def create_file(file: UploadFile, ticket_id:int,db: Session):
+    # TODO file upload to other place
+
+    # hash
+    hash_func = hashlib.sha256()
+    while chunk := file.file.read(25536):
+        hash_func.update(chunk)
+    hash_name=hash_func.hexdigest()
+    # pointer to start
+    file.file.seek(0)
+
+    # save to local
+    with open(f"uploads/{hash_name}.{file.content_type.split('/')[-1]}", "wb+") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    # db
+    db_file=modules.Image(
+        uri=f"uploads/{hash_name}.{file.content_type}",
+        ticket_id=ticket_id,
+        size=file.size
+    )
+
+    db.add(db_file)
+    db.commit()
+    db.refresh(db_file)
+    return db_file
