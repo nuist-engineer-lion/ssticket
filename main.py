@@ -1,6 +1,7 @@
 from fastapi import FastAPI,Depends,File, HTTPException,UploadFile,Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from . import modules, schemas, crud
 from .database import SessionLocal, engine
@@ -10,6 +11,12 @@ import os
 
 modules.Base.metadata.create_all(bind=engine)
 
+class Settings(BaseSettings):
+    app_name: str = "Ssticket"
+    model_config = SettingsConfigDict(env_file=".env")
+
+
+settings = Settings()
 app = FastAPI()
 
 app.mount("/static/", StaticFiles(directory="static"), name="static")
