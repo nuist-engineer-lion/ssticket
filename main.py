@@ -2,10 +2,10 @@ import datetime
 from fastapi import FastAPI,Depends,File, HTTPException,UploadFile,Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from . import modules, schemas, crud
 from .database import SessionLocal, engine
+from .config import Settings
 
 from typing import Annotated
 import json
@@ -13,18 +13,6 @@ import json
 import lark_oapi as lark
 
 modules.Base.metadata.create_all(bind=engine)
-
-class Settings(BaseSettings):
-    app_name: str = "Ssticket"
-    lark_id: str = ""
-    lark_secret: str = ""
-    lark_chat: str = ""
-    domain: str = ""
-    host: str = ""
-    port: str = ""
-    lark_card: str = ""
-    lark_card_v: str = ""
-    model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()
 
