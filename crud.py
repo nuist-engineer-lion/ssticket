@@ -19,8 +19,8 @@ def create_ticket(ticket: schemas.TicketCreate,db: Session):
     if ticket.name:
         db_ticket.name = ticket.name
 
-    if ticket.discription:
-        db_ticket.discription=ticket.discription
+    if ticket.description:
+        db_ticket.description=ticket.description
     
     if ticket.problem_type in [0,1,2]:
         db_ticket.problem_type=ticket.problem_type
@@ -48,7 +48,7 @@ def create_file(file: UploadFile, ticket_id:int,db: Session):
     file.file.seek(0)
 
     # save to local
-    with open(f"uploads/{hash_name}.{file.content_type.split('/')[-1]}", "wb+") as buffer:
+    with open(f"uploads/{hash_name}.{file.content_type.split('/')[-1]}", "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     # db
     db_file=modules.Image(
@@ -97,7 +97,7 @@ def research_file(ticket_id:int,db:Session):
 
 def update_ticket(db_ticket:modules.Ticket,discription:str|None,worker_id:int|None,handled:int|None,db:Session):
     if discription:
-        db_ticket.discription = db_ticket.discription + '\n' +discription
+        db_ticket.description = db_ticket.description + '\n' +discription
     if worker_id:
         db_ticket.worker_id = worker_id
     if handled:
