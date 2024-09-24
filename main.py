@@ -51,6 +51,8 @@ async def upload_ticket_form(
                 crud.create_file(file,db_ticket.id,db)
             finally:
                 file.file.close()
+    # feishu card link to chart
+    # feishu bot notice
     card_json= json.dumps({"data":{
         "template_id":settings.lark_card,
         "template_version_name":settings.lark_card_v,
@@ -85,6 +87,6 @@ async def upload_ticket_form(
 # TODO 空闲成员推荐
 @app.get('/workers',status_code=200)
 async def get_workers(db:Session=Depends(get_db)):
-    # need jinjia template
-    db_workers = crud.research_workers(1,db)
+    # TODO need jinjia template
+    db_workers = crud.research_workers(1,db) 
     return db_workers
