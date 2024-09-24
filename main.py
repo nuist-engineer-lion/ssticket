@@ -20,6 +20,7 @@ lark_client = lark.Client.builder().app_id(settings.lark_id).app_secret(settings
 
 app = FastAPI()
 
+# TODO a better static pagge
 app.mount("/static/", StaticFiles(directory="static"), name="static")
 
 def get_db():
@@ -84,4 +85,6 @@ async def upload_ticket_form(
 # TODO 空闲成员推荐
 @app.get('/workers',status_code=200)
 async def get_workers(db:Session=Depends(get_db)):
-    return
+    # need jinjia template
+    db_workers = crud.research_workers(1,db)
+    return db_workers
