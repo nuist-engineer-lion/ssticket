@@ -64,7 +64,8 @@ async def upload_ticket_form(
             "help_type":modules.HelpType[db_ticket.help_type],
             "problem_type":modules.ProblemType[db_ticket.problem_type],
             "description":db_ticket.description
-        }
+            # TODO show image
+            }
     },"type":"template"},ensure_ascii=False)
     request: lark.api.im.v1.CreateMessageRequest = lark.api.im.v1.CreateMessageRequest.builder() \
         .receive_id_type("chat_id") \

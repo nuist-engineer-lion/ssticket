@@ -5,8 +5,10 @@ from sqlalchemy import select
 
 import shutil
 import hashlib
+import lark_oapi as lark
+from lark_oapi.api.bitable.v1 import *
 
-from . import modules, schemas
+from . import modules, schemas, config
 
 import os
 
@@ -36,6 +38,16 @@ def create_ticket(ticket: schemas.TicketCreate,db: Session):
     db.add(db_ticket)
     db.commit()
     db.refresh(db_ticket)
+        # 构造请求对象
+    request: CreateAppTableRecordRequest = CreateAppTableRecordRequest.builder() \
+        .request_body(AppTableRecord.builder()
+            .fields()
+            .build()) \
+        .build()
+
+    # 发起请求
+    response: CreateAppTableRecordResponse = client.bitable.v1.app_table_record.create(request)
+
     return db_ticket
 
 def create_file(file: UploadFile, ticket_id:int,db: Session):
@@ -54,7 +66,7 @@ def create_file(file: UploadFile, ticket_id:int,db: Session):
         shutil.copyfileobj(file.file, buffer)
     # db
     db_file=modules.Image(
-        uri=f"uploads/{hash_name}.{file.content_type}",
+        path=f"uploads/{hash_name}.{file.content_type.split('/')[-1]}",
         ticket_id=ticket_id,
         size=file.size
     )
@@ -129,5 +141,5 @@ def delete_worker(db_worker:modules.Worker,db:Session):
     db.delete(db_worker)
 
 def delete_file(db_file:modules.Image,db:Session):
-    os.remove(db_file.uri)
+    os.remove(db_file.path)
     db.delete(db_file)

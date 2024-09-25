@@ -10,4 +10,7 @@ class Settings(BaseSettings):
     port: str = ""
     lark_card: str = ""
     lark_card_v: str = ""
+    table_token: str = ""
+    table_id: str = ""
+
     model_config = SettingsConfigDict(env_file=".env")

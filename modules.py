@@ -40,6 +40,7 @@ class Ticket(Base):
 class Image(Base):
     __tablename__ = 'images'
     id = Column(Integer,primary_key=True)
-    uri = Column(String)
+    path = Column(String)
+    token = Column(String,nullable=True)
     size = Column(Integer)
     ticket_id = Column(Integer,ForeignKey('tickets.id'))
